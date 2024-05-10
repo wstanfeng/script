@@ -13,10 +13,10 @@ NAME_BIN="rclone"
 # Description:       Enable rclone by daemon.
 ### END INIT INFO
 
-NAME="Onedrive" #Rclone配置时填写的name
+NAME="aliyun" #Rclone配置时填写的name
 REMOTE=''  #远程文件夹，网盘里的挂载的一个文件夹，留空为整个网盘
-LOCAL='/Onedrive'  #挂载地址，VPS本地挂载目录
-LOG="/$HOME/.rclone/rcloned.log"
+LOCAL='/mnt/aliyun'  #挂载地址，VPS本地挂载目录
+LOG="/root/aliyun.log"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
@@ -32,22 +32,17 @@ check_running(){
 	fi
 }
 do_start(){
-	check_running
-	if [[ $? -eq 0 ]]; then
-		echo -e "${Info} $NAME_BIN (PID ${PID}) 正在运行..." && exit 0
-	else
-		fusermount -zuq $LOCAL >/dev/null 2>&1
-		mkdir -p $LOCAL
-		mkdir -p ${LOG%/*}
-		sudo /usr/bin/rclone mount -vv $NAME:$REMOTE $LOCAL --copy-links --allow-other --allow-non-empty --umask 000 > "${LOG}" 2>&1 &
-		sleep 2s
-		check_running
-		if [[ $? -eq 0 ]]; then
-			echo -e "${Info} $NAME_BIN 启动成功 !"
-		else
-			echo -e "${Error} $NAME_BIN 启动失败 !"
-		fi
-	fi
+    fusermount -zuq $LOCAL >/dev/null 2>&1
+    mkdir -p $LOCAL
+    mkdir -p ${LOG%/*}
+    sudo /usr/bin/rclone mount -vv $NAME:$REMOTE $LOCAL --copy-links --allow-other --allow-non-empty --header "Referer:https://www.aliyundrive.com/" --umask 000 > "${LOG}" 2>&1 &
+    sleep 2s
+    check_running
+    if [[ $? -eq 0 ]]; then
+        echo -e "${Info} $NAME_BIN 启动成功 !"
+    else
+        echo -e "${Error} $NAME_BIN 启动失败 !"
+    fi
 }
 do_stop(){
 	check_running
