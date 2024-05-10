@@ -35,7 +35,7 @@ do_start(){
     fusermount -zuq $LOCAL >/dev/null 2>&1
     mkdir -p $LOCAL
     mkdir -p ${LOG%/*}
-    sudo /usr/bin/rclone mount -vv $NAME:$REMOTE $LOCAL --copy-links --allow-other --allow-non-empty --header "Referer:https://www.aliyundrive.com/" --umask 000 > "${LOG}" 2>&1 &
+    sudo /usr/bin/rclone mount -vv $NAME:$REMOTE $LOCAL --copy-links --allow-other --allow-non-empty --vfs-cache-mode writes --header "Referer:https://www.aliyundrive.com/" --umask 000 > "${LOG}" 2>&1 &
     sleep 2s
     check_running
     if [[ $? -eq 0 ]]; then
